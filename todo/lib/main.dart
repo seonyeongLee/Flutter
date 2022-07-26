@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Todo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -94,25 +94,23 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("오늘하루"),
             );
           } else if (idx == 1) {
-            return Container(
-              child: Column(
-                children: List.generate(todos.length, (_idx) {
-                  Todo t = todos[_idx];
+            return Column(
+              children: List.generate(todos.length, (_idx) {
+                Todo t = todos[_idx];
 
-                  return Container(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(t.title),
-                            Text(t.done == 0 ? "미완료" : "완료")
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                }),
-              ),
+                return Container(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(t.title),
+                          Text(t.done == 0 ? "미완료" : "완료")
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              }),
             );
           }
 
