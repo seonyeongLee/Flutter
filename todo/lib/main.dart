@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo/write.dart';
 
 import 'data/todo.dart';
+import 'data/util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -87,25 +89,130 @@ class _MyHomePageState extends State<MyHomePage> {
         child: AppBar(),
         preferredSize: Size.fromHeight(0),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () async {
+          //화면 이동
+          Todo todo = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (ctx) => TodoWritePage(
+                    todo: Todo(
+                      title: "",
+                      color: 0,
+                      memo: "",
+                      done: 0,
+                      category: "",
+                      date: Utils.getFormatTime(DateTime.now())
+                    ),
+                  )));
+
+          setState(() {
+            todos.add(todo);
+          });
+        },
+      ),
       body: ListView.builder(
         itemBuilder: (ctx, idx) {
           if (idx == 0) {
             return Container(
-              child: Text("오늘하루"),
+              child: Text(
+                "오늘하루",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              margin: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             );
           } else if (idx == 1) {
+            List<Todo> undone = todos.where((t) {
+              return t.done == 0;
+            }).toList();
+
             return Column(
-              children: List.generate(todos.length, (_idx) {
-                Todo t = todos[_idx];
+              children: List.generate(undone.length, (_idx) {
+                Todo t = undone[_idx];
 
                 return Container(
+                  decoration: BoxDecoration(
+                      color: Color(t.color),
+                      borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(t.title),
-                          Text(t.done == 0 ? "미완료" : "완료")
+                          Text(
+                            t.title,
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            t.done == 0 ? "미완료" : "완료",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          )
                         ],
+                      ),
+                      Container(height: 8),
+                      Text(
+                        t.memo,
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      )
+                    ],
+                  ),
+                );
+              }),
+            );
+          } else if (idx == 2) {
+            return Container(
+              child: Text(
+                "완료된 하루",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              margin: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            );
+          } else if (idx == 3) {
+            List<Todo> done = todos.where((t) {
+              return t.done == 1;
+            }).toList();
+
+            return Column(
+              children: List.generate(done.length, (_idx) {
+                Todo t = done[_idx];
+
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Color(t.color),
+                      borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            t.title,
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            t.done == 0 ? "미완료" : "완료",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          )
+                        ],
+                      ),
+                      Container(height: 8),
+                      Text(
+                        t.memo,
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       )
                     ],
                   ),
@@ -124,11 +231,6 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.assignment_outlined), label: "기록"),
         BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: "더보기"),
       ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
